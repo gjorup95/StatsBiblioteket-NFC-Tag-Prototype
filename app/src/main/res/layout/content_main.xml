@@ -15,7 +15,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="381dp"
         android:layout_marginBottom="126dp"
-        android:text="Button" />
+        android:text="Print" />
 
     <ImageView
         android:id="@+id/logo"
@@ -39,6 +39,29 @@
         android:gravity="center_horizontal"
         android:layout_below="@id/logo"/>
 
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="393dp"
+        android:layout_marginEnd="39dp"
+        android:layout_marginBottom="126dp"
+        android:text="Save" />
+
+    <Button
+        android:id="@+id/loadButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="150dp"
+        android:layout_marginEnd="146dp"
+        android:layout_marginBottom="43dp"
+        android:text="Load" />
 
 
 </RelativeLayout>

@@ -1,6 +1,8 @@
 package com.example.bruger.nfc_ekssys;
 
-class BookImpl {
+import java.io.Serializable;
+
+class BookImpl implements Serializable {
     private String name;
     private String forlag;
     private int version;
