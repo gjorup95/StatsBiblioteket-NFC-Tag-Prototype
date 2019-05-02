@@ -35,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private HashMap<Long, BookImpl> bookMap;
     private Button printButton;
     private Tag printTag;
+    private Button fetchButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         text = (TextView) findViewById(R.id.text);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        fetchButton=findViewById(R.id.gotoFetch);
+        fetchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,FetchBooks.class);
+                startActivity(intent);
+            }
+        });
         printButton = findViewById(R.id.buttonPrint);
         printButton.setOnClickListener(new View.OnClickListener() {
             @Override
