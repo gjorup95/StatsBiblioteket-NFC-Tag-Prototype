@@ -15,6 +15,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView text;
     private NfcAdapter nfcAdapter;
     private PendingIntent pendingIntent;
-    private HashMap<Integer, BookImpl> bookMap;
+    private HashMap<Long, BookImpl> bookMap;
     private Button printButton;
-
+    private Tag printTag;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,8 +92,8 @@ public class MainActivity extends AppCompatActivity {
         sb.append("ID (hex): ").append(toHex(id)).append('\n');
         sb.append("ID (reversed hex): ").append(toReversedHex(id)).append('\n');
         sb.append("ID (dec): ").append(toDec(id)).append('\n');
-        Integer i = (int) (long) toDec(id);
-        bookMap.put(i, new BookImpl("abe", i));
+        Long i = new Long(toDec(id));
+         bookMap.put(i, new BookImpl("abe", i));
         sb.append("ID (reversed dec): ").append(toReversedDec(id)).append('\n');
 
         String prefix = "android.nfc.tech.";
@@ -264,8 +265,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void printBookMap(){
-        for (Map.Entry<Integer, BookImpl> entry : bookMap.entrySet()){
-            System.out.println("Book ID is: " + entry.getValue().getId());
+        for (Map.Entry<Long, BookImpl> entry : bookMap.entrySet()){
+            Log.d(String.valueOf(printTag), "printBookMap: " + entry.getKey());
         }
     }
 
