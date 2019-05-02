@@ -51,8 +51,6 @@ import java.util.Map;
 import java.util.Properties;
 
 public class MainActivity extends AppCompatActivity implements Serializable {
-    private static final int REQUEST_WRITE_PERMISSION = 786;
-    private static final String FILE_NAME = "bookMap.txt";
     private TextView text;
     private NfcAdapter nfcAdapter;
     private PendingIntent pendingIntent;
@@ -61,29 +59,16 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private Button saveButton;
     private Button loadButton;
     private Tag printTag;
-
-    private SharedPreferences pref;
-    private SharedPreferences.Editor editor;
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_WRITE_PERMISSION && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-        }
-    }
-
-    private void requestPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_PERMISSION);
-        }
-
-    }
+    private BookImpl previousBook= null;
+    private BookImpl currentBook;
+    private int scans = 0;
 
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        scans = 0;
         bookMap = new HashMap<>();
         setContentView(R.layout.activity_main);
         text = (TextView) findViewById(R.id.text);
@@ -209,9 +194,28 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+    //TODO: adding this function that increments unique scans to determine whether book is correctly placed
+    /* if (scans >= 1){
+            previousBook = currentBook;
+            }
+            currentBook = getBook(toDec(id));
+            scans++;
+
+            if (scans >= 1) {
+                isBookPlacedCorrectly(previousBook, currentBook);
+            }
+            */
+
+    private void isBookPlacedCorrectly(BookImpl previousBook, BookImpl currentBook){
+        if (currentBook.getId() == previousBook.getId()){
+            int duration = Toast.LENGTH_SHORT;
+            Toast.makeText(this, "Du har scannet samme bog to gange", duration).show();
+        }
+    }
     private void printBookMap() {
         for (Map.Entry<Long, BookImpl> entry : bookMap.entrySet()) {
             Log.d(String.valueOf(printTag), "printBookMap: " + entry.getKey());
+            Log.d(String.valueOf(printTag), "access object: " + entry.getValue().getId());
         }
     }
 
@@ -223,6 +227,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             stringBuilder.append(str);
         }
         text.setText(stringBuilder);
+    }
+
+    private BookImpl getBook(Long id){
+        return bookMap.get(id);
     }
 
     /**
