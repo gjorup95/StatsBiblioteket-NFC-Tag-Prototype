@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private Button saveButton;
     private Button loadButton;
     private Tag printTag;
+
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
 
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
 
     }
+
 
 
     @Override
@@ -115,7 +117,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 printBookMap();
             }
         });
-
         if (nfcAdapter == null) {
             Toast.makeText(this, "No NFC", Toast.LENGTH_SHORT).show();
             finish();
