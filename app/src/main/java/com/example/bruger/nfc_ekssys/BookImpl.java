@@ -7,7 +7,8 @@ class BookImpl implements Serializable {
     private String forlag;
     private int version;
     private long id;
-
+    private int internalID;
+    private static int objectID = 0;
     // millimeter
     private int height;
     private int depth;
@@ -21,6 +22,10 @@ class BookImpl implements Serializable {
         depth = 26;
         width = 245;
         weigth = 1100;
+        objectID++;
+        this.internalID = objectID;
+
+
     }
     public BookImpl (String name, long id, int height, int width, int depth, int weigth, String forlag, int version){
         this.name =name;
@@ -62,5 +67,9 @@ class BookImpl implements Serializable {
 
     public int getWeigth() {
         return weigth;
+    }
+
+    public int getInternalID() {
+        return internalID;
     }
 }

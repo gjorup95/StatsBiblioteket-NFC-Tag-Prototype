@@ -58,11 +58,11 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private Button printButton;
     private Button saveButton;
     private Button loadButton;
+    private Button deleteButton;
     private Tag printTag;
-    private BookImpl previousBook= null;
-    private BookImpl currentBook;
+    private BookImpl previousBook = null;
+    private BookImpl currentBook = null;
     private int scans = 0;
-
 
 
     @Override
@@ -76,6 +76,13 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         printButton = findViewById(R.id.buttonPrint);
         saveButton = findViewById(R.id.saveButton);
         loadButton = findViewById(R.id.loadButton);
+        deleteButton = findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                deleteHashMap();
+            }
+        });
         loadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -130,6 +137,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
     }
 
+private void deleteHashMap(){
+    SharedPreferences keyValues = getSharedPreferences("Your_Shared_Prefs", Context.MODE_PRIVATE);
+    keyValues.edit().clear().apply();
+}
 
     private void loadHashMap() throws IOException, ClassNotFoundException {
         SharedPreferences keyValues = getSharedPreferences("Your_Shared_Prefs", Context.MODE_PRIVATE);
@@ -189,33 +200,42 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             NdefMessage[] msgs;
             byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
-            addToBookMap(id);
+            Long i = toDec(id);
+            // TODO: fix the bogen er placeret korrekt
+            if (!bookMap.containsKey(i)){
+                addToBookMap(id);
+            }
             setUpTextView();
-        }
-    }
-
-    //TODO: adding this function that increments unique scans to determine whether book is correctly placed
-    /* if (scans >= 1){
-            previousBook = currentBook;
+            if (scans >= 1) {
+                previousBook = currentBook;
             }
             currentBook = getBook(toDec(id));
             scans++;
-
             if (scans >= 1) {
                 isBookPlacedCorrectly(previousBook, currentBook);
             }
-            */
-
-    private void isBookPlacedCorrectly(BookImpl previousBook, BookImpl currentBook){
-        if (currentBook.getId() == previousBook.getId()){
-            int duration = Toast.LENGTH_SHORT;
-            Toast.makeText(this, "Du har scannet samme bog to gange", duration).show();
         }
     }
+
+
+
+    private void isBookPlacedCorrectly(BookImpl previousBook, BookImpl currentBook) {
+        if (previousBook != null && currentBook != null) {
+            if (Math.abs(previousBook.getInternalID()-currentBook.getInternalID()) <= 1){
+                int duration = Toast.LENGTH_SHORT;
+                Toast.makeText(this, "Bogen er placeret korrekt", duration).show();
+            }
+            if (currentBook.getId() == previousBook.getId()) {
+                int duration = Toast.LENGTH_SHORT;
+                Toast.makeText(this, "Du har scannet samme bog to gange", duration).show();
+            }
+        }
+    }
+
     private void printBookMap() {
         for (Map.Entry<Long, BookImpl> entry : bookMap.entrySet()) {
             Log.d(String.valueOf(printTag), "printBookMap: " + entry.getKey());
-            Log.d(String.valueOf(printTag), "access object: " + entry.getValue().getId());
+            Log.d(String.valueOf(printTag), "access object: " + entry.getValue().getInternalID());
         }
     }
 
@@ -223,13 +243,13 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         final StringBuilder stringBuilder = new StringBuilder();
         String str;
         for (Map.Entry<Long, BookImpl> entry : bookMap.entrySet()) {
-            str = entry.getKey().toString();
+            str = entry.getValue().getInternalID() + ", ";
             stringBuilder.append(str);
         }
         text.setText(stringBuilder);
     }
 
-    private BookImpl getBook(Long id){
+    private BookImpl getBook(Long id) {
         return bookMap.get(id);
     }
 
