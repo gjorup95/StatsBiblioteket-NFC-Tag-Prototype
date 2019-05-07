@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private BookImpl previousBook = null;
     private BookImpl currentBook = null;
     private int scans = 0;
+    int duration = Toast.LENGTH_SHORT;
 
 
     @Override
@@ -137,10 +138,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
     }
 
-private void deleteHashMap(){
-    SharedPreferences keyValues = getSharedPreferences("Your_Shared_Prefs", Context.MODE_PRIVATE);
-    keyValues.edit().clear().apply();
-}
+    private void deleteHashMap() {
+        SharedPreferences keyValues = getSharedPreferences("Your_Shared_Prefs", Context.MODE_PRIVATE);
+        keyValues.edit().clear().apply();
+    }
 
     private void loadHashMap() throws IOException, ClassNotFoundException {
         SharedPreferences keyValues = getSharedPreferences("Your_Shared_Prefs", Context.MODE_PRIVATE);
@@ -201,35 +202,45 @@ private void deleteHashMap(){
             NdefMessage[] msgs;
             byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
             Long i = toDec(id);
-            // TODO: fix the bogen er placeret korrekt
-            if (!bookMap.containsKey(i)){
+            // TODO: fix at bogen placeres i hashmappet efter højeste scannede nr i stedet for scannet rækkefølge
+            if (!bookMap.containsKey(i)) {
                 addToBookMap(id);
             }
             setUpTextView();
+            // second scan
             if (scans >= 1) {
                 previousBook = currentBook;
             }
+            // first scan
             currentBook = getBook(toDec(id));
-            scans++;
+
             if (scans >= 1) {
-                isBookPlacedCorrectly(previousBook, currentBook);
+                if (isBookPlacedCorrectly(previousBook, currentBook)) {
+                    scans = 0;
+                    previousBook = null;
+                    currentBook = null;
+                    return;
+                } else currentBook = previousBook;
             }
+            scans++;
         }
     }
 
 
-
-    private void isBookPlacedCorrectly(BookImpl previousBook, BookImpl currentBook) {
+    private boolean isBookPlacedCorrectly(BookImpl previousBook, BookImpl currentBook) {
         if (previousBook != null && currentBook != null) {
-            if (Math.abs(previousBook.getInternalID()-currentBook.getInternalID()) <= 1){
-                int duration = Toast.LENGTH_SHORT;
+            if (Math.abs(previousBook.getInternalID() - currentBook.getInternalID()) <= 1 && currentBook.getId() != previousBook.getId()) {
+                Log.d(String.valueOf(printTag), "bookid 1: " + previousBook.getInternalID() + " - bookid 2: " + currentBook.getInternalID());
                 Toast.makeText(this, "Bogen er placeret korrekt", duration).show();
+                return true;
             }
             if (currentBook.getId() == previousBook.getId()) {
-                int duration = Toast.LENGTH_SHORT;
                 Toast.makeText(this, "Du har scannet samme bog to gange", duration).show();
+                return false;
             }
         }
+        Toast.makeText(this, "Du har placeret bogen forkert, scan igen", duration).show();
+        return false;
     }
 
     private void printBookMap() {
