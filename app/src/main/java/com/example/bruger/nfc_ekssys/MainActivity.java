@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private BookImpl previousBook = null;
     private BookImpl currentBook = null;
     private int scans = 0;
+
     int duration = Toast.LENGTH_SHORT;
 
 
