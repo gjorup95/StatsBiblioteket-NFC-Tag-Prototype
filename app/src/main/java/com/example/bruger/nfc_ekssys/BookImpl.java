@@ -1,8 +1,12 @@
 package com.example.bruger.nfc_ekssys;
 
-import java.io.Serializable;
+import android.annotation.SuppressLint;
+import android.support.annotation.NonNull;
 
-class BookImpl implements Serializable {
+import java.io.Serializable;
+import java.util.Comparator;
+
+class BookImpl implements Serializable, Comparable<BookImpl> {
     private String name;
     private String forlag;
     private int version;
@@ -15,6 +19,8 @@ class BookImpl implements Serializable {
     private int width;
     // Gram
     private int weigth;
+
+
     public BookImpl (String name, long id){
         this.name = name;
         this.id = id;
@@ -71,5 +77,20 @@ class BookImpl implements Serializable {
 
     public int getInternalID() {
         return internalID;
+    }
+
+    private static Comparator <BookImpl> getComparator(){
+        @SuppressLint({"NewApi", "LocalSuppress"}) Comparator<BookImpl> result = Comparator.comparing(BookImpl::getInternalID);
+        return result;
+    }
+
+    @Override
+    public int compareTo(@NonNull BookImpl that) {
+        Comparator<BookImpl> COMPARATOR = getComparator();
+        int result = COMPARATOR.compare(this, that);
+        if (result==0){
+
+        }
+        return result;
     }
 }
