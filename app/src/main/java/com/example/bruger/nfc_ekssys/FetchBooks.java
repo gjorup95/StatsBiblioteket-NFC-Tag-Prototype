@@ -25,7 +25,6 @@ public class FetchBooks extends AppCompatActivity {
     private  Tag printTag;
     private NfcAdapter nfcAdapter;
     private PendingIntent pendingIntent;
-    private HashMap<Long,BookImpl> bookMap;
     private TextView successText;
     private int nextBook;
     private TextView nextText;
@@ -33,17 +32,22 @@ public class FetchBooks extends AppCompatActivity {
     private ImageView acceptView;
     private Button fakeItButton;
     private List<BookImpl> bookList;
+    private boolean bookWasCorrectlyScanned = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bookList = new ArrayList<>();
+        if (Singleton.getInstance().getArrayList() != null){
+            bookList = Singleton.getInstance().getArrayList();
+
+        }
         setContentView(R.layout.activity_fetch_books);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         pendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, this.getClass())
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
-        setupBookDB();
         fakeItButton = findViewById(R.id.fakeIt);
         fakeItButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,12 +57,14 @@ public class FetchBooks extends AppCompatActivity {
         });
         successText = findViewById(R.id.successText);
         nextText = findViewById(R.id.nextText);
-        nextText.setText(bookMap.get(2987440147L).getName());
+        nextText.setText(bookList.get(0).getName());
         nextBookButton = findViewById(R.id.nextBookButton);
         nextBookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                nextText.setText(bookMap.get(getNextBook()).getName());
+                if (getNextBookToScan() != null) {
+                    nextText.setText(getNextBookToScan().getName());
+                }
                 successText.setText("");
                 nextBookButton.setVisibility(View.GONE);
                 acceptView.setVisibility(View.GONE);
@@ -66,21 +72,9 @@ public class FetchBooks extends AppCompatActivity {
         });
         acceptView = findViewById(R.id.acceptView);
         acceptView.setVisibility(View.GONE);
-        if (Singleton.getInstance().getArrayList() != null){
-            bookList = Singleton.getInstance().getArrayList();
 
-        }
     }
 
-    private void setupBookDB() {
-        bookMap = new HashMap<>();
-        BookImpl book1 = new BookImpl("Studiekort",2987440147L);
-        BookImpl book2= new BookImpl("Dankort",4174334015L);
-        BookImpl book3=new BookImpl("Studiekort2",1935306686L);
-        bookMap.put(book1.getId(),book1);
-        bookMap.put(book2.getId(),book2);
-        bookMap.put(book3.getId(),book3);
-    }
 
     @Override
     protected void onResume() {
@@ -102,17 +96,26 @@ public class FetchBooks extends AppCompatActivity {
     private void resolveIntent(Intent intent) {
         String action = intent.getAction();
 
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)
-                || NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)
-                || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(action)) {
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
             byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
-            System.out.println(toDec(id)+"hejhej");
-            if(toDec(id)==getNextBook()){
-                successText.setText("Correct");
-                acceptView.setVisibility(View.VISIBLE);
-                acceptView.setImageResource(R.drawable.ic_flueben);
-                nextBook++;
-                nextBookButton.setVisibility(View.VISIBLE);
+
+            long bookID = toDec(id);
+
+                for (int i=0; i<bookList.size(); i++) {
+                    if (bookList.get(i).getId() == bookID) {
+                        scanBook(bookList.get(i));
+                        bookWasCorrectlyScanned = true;
+                    }
+                }
+                if (bookWasCorrectlyScanned) {
+
+                    successText.setText("Correct");
+                    acceptView.setVisibility(View.VISIBLE);
+                    acceptView.setImageResource(R.drawable.ic_flueben);
+                    nextBook++;
+                    nextBookButton.setVisibility(View.VISIBLE);
+                    bookWasCorrectlyScanned = false;
+                }
             }
             else{
                 successText.setText("Wrong book, try again");
@@ -120,17 +123,7 @@ public class FetchBooks extends AppCompatActivity {
                 acceptView.setImageResource(R.drawable.ic_afvist);
             }
         }
-    }
 
-    private long getNextBook() {
-        if(nextBook==0){
-            return 2987440147L;
-        }
-        else if(nextBook==1){
-            return 1935306686;
-        }
-        return 4174334015L;
-    }
 
     @Override
     protected void onNewIntent(Intent intent) {
@@ -156,11 +149,42 @@ public class FetchBooks extends AppCompatActivity {
         nextBook++;
         nextBookButton.setVisibility(View.VISIBLE);
     }
+    public void scanBook(BookImpl book){
+        book.setScanned(true);
+    }
     public void printBooks(){
         if (bookList != null){
             for (int i =0; i<bookList.size(); i++){
                 Log.d(String.valueOf(printTag), "bookID: " + bookList.get(i).getInternalID() + " Name: " + bookList.get(i).getName());
             }
         }
+    }
+    public ArrayList<BookImpl> getScannedBooks (){
+        ArrayList<BookImpl> tempList = new ArrayList<>();
+        for (int i=0; i<bookList.size(); i++){
+            if(bookList.get(i).isScanned()){
+                tempList.add(bookList.get(i));
+            }
+        }
+return tempList;
+    }
+
+    public ArrayList<BookImpl> getRemaingNotScannedBooks(){
+        ArrayList<BookImpl> tempList = new ArrayList<>();
+        for (int i=0; i<bookList.size(); i++){
+            if(bookList.get(i).isScanned()== false){
+                tempList.add(bookList.get(i));
+            }
+        }
+        return tempList;
+    }
+    public BookImpl getNextBookToScan(){
+        for (int i=0; i<bookList.size(); i++){
+            if (!bookList.get(i).isScanned()){
+                return bookList.get(i);
+            }
+        }
+        // TODO:: Add there are no remaining books
+        return null;
     }
 }

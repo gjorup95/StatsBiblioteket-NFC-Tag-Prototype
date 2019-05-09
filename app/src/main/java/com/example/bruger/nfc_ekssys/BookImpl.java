@@ -19,6 +19,7 @@ class BookImpl implements Serializable, Comparable<BookImpl> {
     private int width;
     // Gram
     private int weigth;
+    private boolean isScanned;
 
 
     public BookImpl (String name, long id){
@@ -30,6 +31,7 @@ class BookImpl implements Serializable, Comparable<BookImpl> {
         weigth = 1100;
         objectID++;
         this.internalID = objectID;
+        this.isScanned = false;
 
 
     }
@@ -92,5 +94,13 @@ class BookImpl implements Serializable, Comparable<BookImpl> {
 
         }
         return result;
+    }
+
+    public boolean isScanned() {
+        return isScanned;
+    }
+
+    public void setScanned(boolean scanned) {
+        isScanned = scanned;
     }
 }
