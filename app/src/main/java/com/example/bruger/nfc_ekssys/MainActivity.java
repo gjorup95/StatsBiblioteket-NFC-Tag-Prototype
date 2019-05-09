@@ -193,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     @Override
     protected void onPause() {
         super.onPause();
+        updateList();
         nfcAdapter.disableForegroundDispatch(this);
     }
 
@@ -289,7 +290,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         return bookMap.get(id);
     }
 
-    private void updateList(){
+    public void updateList(){
         Collection<BookImpl> demo = bookMap.values();
         ArrayList<BookImpl> listOfKeys = new ArrayList<>(demo);
         bookList = listOfKeys;
@@ -300,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
      * Read the object from Base64 string.
      */
     @SuppressLint("NewApi")
-    private static Object fromString(String s) throws IOException,
+    public static Object fromString(String s) throws IOException,
             ClassNotFoundException {
         byte[] data = Base64.getDecoder().decode(s);
         ObjectInputStream ois = new ObjectInputStream(
@@ -314,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
      * Write the object to a Base64 string.
      */
     @SuppressLint("NewApi")
-    private static String toString(Serializable o) throws IOException {
+    public static String toString(Serializable o) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream oos = new ObjectOutputStream(baos);
         oos.writeObject(o);
