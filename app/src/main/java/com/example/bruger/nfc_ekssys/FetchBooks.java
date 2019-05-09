@@ -102,13 +102,12 @@ public class FetchBooks extends AppCompatActivity {
             long bookID = toDec(id);
 
                 for (int i=0; i<bookList.size(); i++) {
-                    if (bookList.get(i).getId() == bookID) {
+                    if (bookList.get(i) != null && bookList.get(i).getId() == bookID && bookList.get(i).isScanned() == false) {
                         scanBook(bookList.get(i));
                         bookWasCorrectlyScanned = true;
                     }
                 }
                 if (bookWasCorrectlyScanned) {
-
                     successText.setText("Correct");
                     acceptView.setVisibility(View.VISIBLE);
                     acceptView.setImageResource(R.drawable.ic_flueben);
