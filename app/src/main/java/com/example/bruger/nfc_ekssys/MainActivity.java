@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             return;
         }
         updateList();
+        Singleton.getInstance().setArrayList((ArrayList<BookImpl>) bookList);
         pendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, this.getClass())
                         .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);

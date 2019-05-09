@@ -3,21 +3,26 @@ package com.example.bruger.nfc_ekssys;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
+import android.nfc.Tag;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * By Mathias Laursen copyright
  */
 public class FetchBooks extends AppCompatActivity {
+    private  Tag printTag;
     private NfcAdapter nfcAdapter;
     private PendingIntent pendingIntent;
     private HashMap<Long,BookImpl> bookMap;
@@ -27,10 +32,12 @@ public class FetchBooks extends AppCompatActivity {
     private Button nextBookButton;
     private ImageView acceptView;
     private Button fakeItButton;
+    private List<BookImpl> bookList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        bookList = new ArrayList<>();
         setContentView(R.layout.activity_fetch_books);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         pendingIntent = PendingIntent.getActivity(this, 0,
@@ -59,6 +66,10 @@ public class FetchBooks extends AppCompatActivity {
         });
         acceptView = findViewById(R.id.acceptView);
         acceptView.setVisibility(View.GONE);
+        if (Singleton.getInstance().getArrayList() != null){
+            bookList = Singleton.getInstance().getArrayList();
+
+        }
     }
 
     private void setupBookDB() {
@@ -138,10 +149,18 @@ public class FetchBooks extends AppCompatActivity {
     }
 
     public void fakeIt(){
+        printBooks();
         successText.setText("Correct");
         acceptView.setVisibility(View.VISIBLE);
         acceptView.setImageResource(R.drawable.ic_flueben);
         nextBook++;
         nextBookButton.setVisibility(View.VISIBLE);
+    }
+    public void printBooks(){
+        if (bookList != null){
+            for (int i =0; i<bookList.size(); i++){
+                Log.d(String.valueOf(printTag), "bookID: " + bookList.get(i).getInternalID() + " Name: " + bookList.get(i).getName());
+            }
+        }
     }
 }
