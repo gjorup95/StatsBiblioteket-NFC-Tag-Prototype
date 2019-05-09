@@ -53,6 +53,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
     private ImageView acceptView;
     private TextView nextBookText;
     private Button nextBookButton;
+    private TextView nextBookPlace;
 
 
     @Override
@@ -71,6 +72,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
         acceptView = findViewById(R.id.imageView);
         nextBookText=findViewById(R.id.nextBookText);
         text.setText("Scan næste bog");
+        nextBookPlace = findViewById(R.id.nextBookPlace);
         nextBookButton = findViewById(R.id.nextBookReset);
         nextBookButton.setVisibility(View.GONE);
         nextBookButton.setOnClickListener(new View.OnClickListener() {
@@ -226,8 +228,10 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
             }
             // first scan
             nextBookText.setVisibility(View.VISIBLE);
+            nextBookPlace.setVisibility(View.VISIBLE);
             currentBook = getBook(toDec(id));
             nextBookText.setText(currentBook.getName()+" scannet");
+            nextBookPlace.setText(currentBook.getInternalID()+"");
             text.setText("Scan bogen ved siden af");
             updateList();
             if (scans >= 1) {
@@ -318,6 +322,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
         acceptView.setVisibility(View.GONE);
         text.setText("Scan næste bog");
         nextBookText.setVisibility(View.GONE);
+        nextBookPlace.setVisibility(View.GONE);
         nextBookButton.setVisibility(View.GONE);
     }
 }
