@@ -131,9 +131,9 @@ public class FetchBooks extends AppCompatActivity {
     private void resolveIntent(Intent intent) {
         String action = intent.getAction();
 
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action) && hasNotBeenPressed<= 1) {
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action) && hasNotBeenPressed== 1) {
             byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
-
+            hasNotBeenPressed = 0;
             long bookID = toDec(id);
 
             for (int i = 0; i < bookList.size(); i++) {
@@ -148,7 +148,6 @@ public class FetchBooks extends AppCompatActivity {
                 acceptView.setImageResource(R.drawable.ic_flueben);
                 nextBookButton.setVisibility(View.VISIBLE);
                 bookWasCorrectlyScanned = false;
-                hasNotBeenPressed = 0;
 
 
             } else {
