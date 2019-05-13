@@ -9,6 +9,8 @@ import android.nfc.Tag;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,7 +43,15 @@ public class FetchBooks extends AppCompatActivity {
     private List<BookImpl> bookList;
     private boolean bookWasCorrectlyScanned = false;
     private HashMap<Long, BookImpl> bookMap;
+
     private int hasNotBeenPressed = 1;
+
+    // Recycler stuff
+
+    private BookAdapter adapter;
+    private RecyclerView recyclerView;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +59,9 @@ public class FetchBooks extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         bookList = new ArrayList<>();
         bookMap = new HashMap<>();
+
         setContentView(R.layout.activity_fetch_books);
+
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         pendingIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, this.getClass())
@@ -165,9 +177,13 @@ public class FetchBooks extends AppCompatActivity {
     }
 
     public void fakeIt() {
-        randomizeBookList();
-        successText.setText("Randomized list");
-
+        // Recycler stuff
+        recyclerView = findViewById(R.id.my_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        List list = getRemainingNotScannedBooks();
+        adapter = new BookAdapter(this, getRemainingNotScannedBooks());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     public void scanBook(BookImpl book) {
@@ -192,7 +208,7 @@ public class FetchBooks extends AppCompatActivity {
         return tempList;
     }
 
-    public ArrayList<BookImpl> getRemaingNotScannedBooks() {
+    public ArrayList<BookImpl> getRemainingNotScannedBooks() {
         ArrayList<BookImpl> tempList = new ArrayList<>();
         for (int i = 0; i < bookList.size(); i++) {
             if (bookList.get(i).isScanned() == false) {
