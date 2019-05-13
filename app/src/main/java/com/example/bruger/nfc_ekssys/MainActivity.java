@@ -48,6 +48,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
     private BookImpl previousBook = null;
     private BookImpl currentBook = null;
     private int scans = 0;
+    private int addedBooks=0;
     private List<BookImpl> bookList;
 
     int duration = Toast.LENGTH_SHORT;
@@ -55,11 +56,14 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
     private TextView nextBookText;
     private Button nextBookButton;
     private TextView nextBookPlace;
+    private ArrayList<String> bookNames;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        bookNames = new ArrayList<>();
+        setupBookNames();
         scans = 0;
         bookMap = new HashMap<>();
         bookList = new ArrayList<>();
@@ -193,7 +197,13 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
 
     private void addToBookMap(byte[] tag) {
         Long i = toDec(tag);
-        bookMap.put(i, new BookImpl("Harry potter og de vises sten", i));
+        if (bookNames != null && addedBooks < bookNames.size()){
+            bookMap.put(i, new BookImpl(bookNames.get(addedBooks), i));
+            addedBooks++;
+        }
+        else {
+            bookMap.put(i, new BookImpl("Harry Potter", i));
+        }
     }
 
     private long toDec(byte[] bytes) {
@@ -330,6 +340,12 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
         nextBookPlace.setVisibility(View.GONE);
         nextBookButton.setVisibility(View.GONE);
     }
+    public void setupBookNames(){
+        // TODO: setup books
+        bookNames.add("fisk");
+        bookNames.add("kur");
+        bookNames.add("rape");
+        bookNames.add("minus");
+    }
 }
-
 
