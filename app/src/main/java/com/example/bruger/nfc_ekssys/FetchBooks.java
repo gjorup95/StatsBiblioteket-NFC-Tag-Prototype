@@ -41,7 +41,7 @@ public class FetchBooks extends AppCompatActivity {
     private List<BookImpl> bookList;
     private boolean bookWasCorrectlyScanned = false;
     private HashMap<Long, BookImpl> bookMap;
-
+    private int hasNotBeenPressed = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +73,7 @@ public class FetchBooks extends AppCompatActivity {
                 successText.setText("");
                 nextBookButton.setVisibility(View.GONE);
                 acceptView.setVisibility(View.GONE);
+                hasNotBeenPressed = 1;
             }
         });
         acceptView = findViewById(R.id.acceptView);
@@ -118,7 +119,7 @@ public class FetchBooks extends AppCompatActivity {
     private void resolveIntent(Intent intent) {
         String action = intent.getAction();
 
-        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
+        if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action) && hasNotBeenPressed<= 1) {
             byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
 
             long bookID = toDec(id);
@@ -135,6 +136,8 @@ public class FetchBooks extends AppCompatActivity {
                 acceptView.setImageResource(R.drawable.ic_flueben);
                 nextBookButton.setVisibility(View.VISIBLE);
                 bookWasCorrectlyScanned = false;
+                hasNotBeenPressed = 0;
+
 
             } else {
                 successText.setText("Wrong book, try again");
