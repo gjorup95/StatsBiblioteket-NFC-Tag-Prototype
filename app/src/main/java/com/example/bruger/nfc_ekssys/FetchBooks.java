@@ -50,6 +50,7 @@ public class FetchBooks extends AppCompatActivity {
 
     private BookAdapter adapter;
     private RecyclerView recyclerView;
+    private int state=0;
 
 
 
@@ -100,6 +101,8 @@ public class FetchBooks extends AppCompatActivity {
         if (bookList.size() != 0) {
             nextText.setText(bookList.get(0).getName());
         }
+        recyclerView = findViewById(R.id.my_recycler_view);
+        recyclerView.setVisibility(View.GONE);
     }
 
 
@@ -178,12 +181,20 @@ public class FetchBooks extends AppCompatActivity {
 
     public void fakeIt() {
         // Recycler stuff
-        recyclerView = findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         List list = getRemainingNotScannedBooks();
         adapter = new BookAdapter(this, getRemainingNotScannedBooks());
         recyclerView.setAdapter(adapter);
-        recyclerView.setVisibility(View.VISIBLE);
+        if(state==0) {
+            recyclerView.setVisibility(View.VISIBLE);
+            state=1;
+            fakeItButton.setText("Skjul manglende bøger");
+            return;
+        }else if(state==1){
+            recyclerView.setVisibility(View.GONE);
+            state=0;
+            fakeItButton.setText("Vis manglende bøger");
+        }
     }
 
     public void scanBook(BookImpl book) {

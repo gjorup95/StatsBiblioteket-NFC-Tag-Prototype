@@ -1,19 +1,12 @@
 package com.example.bruger.nfc_ekssys;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import static com.example.bruger.nfc_ekssys.MainActivity.fromString;
 
 public class WorkSelector extends AppCompatActivity {
 
