@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static com.example.bruger.nfc_ekssys.MainActivity.fromString;
 
@@ -82,8 +83,10 @@ public class FetchBooks extends AppCompatActivity {
             e.printStackTrace();
         }
         updateList();
-        // TODO: HARDCODED
-        nextText.setText(bookList.get(0).getName());
+        nextText.setText("Ingen bøger i databasen");
+        if (bookList.size() != 0) {
+            nextText.setText(bookList.get(0).getName());
+        }
     }
 
 
@@ -132,20 +135,11 @@ public class FetchBooks extends AppCompatActivity {
                 acceptView.setImageResource(R.drawable.ic_flueben);
                 nextBookButton.setVisibility(View.VISIBLE);
                 bookWasCorrectlyScanned = false;
-                try {
-                    Thread.sleep(600);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
             } else {
                 successText.setText("Wrong book, try again");
                 acceptView.setVisibility(View.VISIBLE);
                 acceptView.setImageResource(R.drawable.ic_afvist);
-                try {
-                    Thread.sleep(600);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
         }
     }
@@ -168,11 +162,9 @@ public class FetchBooks extends AppCompatActivity {
     }
 
     public void fakeIt() {
-        printBooks();
-        successText.setText("Correct");
-        acceptView.setVisibility(View.VISIBLE);
-        acceptView.setImageResource(R.drawable.ic_flueben);
-        nextBookButton.setVisibility(View.VISIBLE);
+        randomizeBookList();
+        successText.setText("Randomized list");
+
     }
 
     public void scanBook(BookImpl book) {
@@ -229,5 +221,15 @@ public class FetchBooks extends AppCompatActivity {
         ArrayList<BookImpl> listOfKeys = new ArrayList<>(demo);
         bookList = listOfKeys;
         Collections.sort(bookList);
+    }
+    public void randomizeBookList(){
+
+        for (int i =0; i<bookList.size(); i++){
+            if (ThreadLocalRandom.current().nextInt(0, 10+1)> 6){
+                bookList.get(i).setScanned(true);
+            }
+
+        }
+
     }
 }

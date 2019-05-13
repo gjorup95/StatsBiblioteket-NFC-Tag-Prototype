@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.drm.DrmStore;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -192,7 +193,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
 
     private void addToBookMap(byte[] tag) {
         Long i = toDec(tag);
-        bookMap.put(i, new BookImpl("abe", i));
+        bookMap.put(i, new BookImpl("Harry potter og de vises sten", i));
     }
 
     private long toDec(byte[] bytes) {
@@ -212,12 +213,15 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
         resolveIntent(intent);
     }
 
+    @SuppressLint("NewApi")
     private void resolveIntent(Intent intent) {
+
         String action = intent.getAction();
+        //Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
         if (NfcAdapter.ACTION_TAG_DISCOVERED.equals(action)) {
-            Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
-            NdefMessage[] msgs;
+            //Parcelable[] rawMsgs = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
             byte[] id = intent.getByteArrayExtra(NfcAdapter.EXTRA_ID);
+            //nfcAdapter.ignore(tag, 400, null, null);
             Long i = toDec(id);
             // TODO: fix at bogen placeres i hashmappet efter højeste scannede nr i stedet for scannet rækkefølge
             if (!bookMap.containsKey(i)) {
