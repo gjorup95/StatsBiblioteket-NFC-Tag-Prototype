@@ -5,42 +5,22 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.nfc.NdefMessage;
-import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
-import android.nfc.tech.MifareClassic;
-import android.nfc.tech.MifareUltralight;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.annotation.RequiresApi;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -52,12 +32,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
-import static java.util.Map.Entry.comparingByValue;
-import static java.util.stream.Collectors.toMap;
 
-public class MainActivity extends AppCompatActivity implements Serializable {
+public class    MainActivity extends AppCompatActivity implements Serializable {
     private TextView text;
     private NfcAdapter nfcAdapter;
     private PendingIntent pendingIntent;
@@ -73,6 +50,10 @@ public class MainActivity extends AppCompatActivity implements Serializable {
     private List<BookImpl> bookList;
 
     int duration = Toast.LENGTH_SHORT;
+    private ImageView acceptView;
+    private TextView nextBookText;
+    private Button nextBookButton;
+    private TextView nextBookPlace;
 
 
     @Override
@@ -82,12 +63,24 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         bookMap = new HashMap<>();
         bookList = new ArrayList<>();
         setContentView(R.layout.activity_main);
-        text = (TextView) findViewById(R.id.text);
+        text = (TextView) findViewById(R.id.acceptTextMain);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         printButton = findViewById(R.id.buttonPrint);
         saveButton = findViewById(R.id.saveButton);
         loadButton = findViewById(R.id.loadButton);
         deleteButton = findViewById(R.id.deleteButton);
+        acceptView = findViewById(R.id.imageView);
+        nextBookText=findViewById(R.id.nextBookText);
+        text.setText("Scan næste bog");
+        nextBookPlace = findViewById(R.id.nextBookPlace);
+        nextBookButton = findViewById(R.id.nextBookReset);
+        nextBookButton.setVisibility(View.GONE);
+        nextBookButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                resetGUI();
+            }
+        });
         try {
             loadHashMap();
         } catch (IOException e) {
@@ -235,7 +228,12 @@ public class MainActivity extends AppCompatActivity implements Serializable {
                 previousBook = currentBook;
             }
             // first scan
+            nextBookText.setVisibility(View.VISIBLE);
+            nextBookPlace.setVisibility(View.VISIBLE);
             currentBook = getBook(toDec(id));
+            nextBookText.setText(currentBook.getName()+" scannet");
+            nextBookPlace.setText(currentBook.getInternalID()+"");
+            text.setText("Scan bogen ved siden af");
             updateList();
             if (scans >= 1) {
                 if (isBookPlacedCorrectly(previousBook, currentBook)) {
@@ -256,15 +254,25 @@ public class MainActivity extends AppCompatActivity implements Serializable {
             if (Math.abs(previousBook.getInternalID() - currentBook.getInternalID()) <= 1 && currentBook.getId() != previousBook.getId()) {
                 Log.d(String.valueOf(printTag), "bookid 1: " + previousBook.getInternalID() + " - bookid 2: " + currentBook.getInternalID());
                 Toast.makeText(this, "Bogen er placeret korrekt", duration).show();
+                acceptView.setImageResource(R.drawable.ic_flueben);
+                acceptView.setVisibility(View.VISIBLE);
+                text.setText("Bogen er placeret korrekt");
+                nextBookButton.setVisibility(View.VISIBLE);
                 return true;
             }
             if (currentBook.getId() == previousBook.getId()) {
                 // forkert placeret
                 Toast.makeText(this, "Du har scannet samme bog to gange", duration).show();
+                acceptView.setImageResource(R.drawable.ic_afvist);
+                acceptView.setVisibility(View.VISIBLE);
+                text.setText("Du har scannet samme bog to gange");
                 return false;
             }
         }
         // scannet forkert nummer 2 bog
+        acceptView.setImageResource(R.drawable.ic_afvist);
+        acceptView.setVisibility(View.VISIBLE);
+        text.setText("Du har placeret bogen forkert, scan igen");
         Toast.makeText(this, "Du har placeret bogen forkert, scan igen", duration).show();
         return false;
     }
@@ -276,16 +284,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         }
     }
 
-    private void setUpTextView() {
-        final StringBuilder stringBuilder = new StringBuilder();
-        String str;
-        for (int i=0; i<bookList.size(); i++) {
-            str = bookList.get(i).getInternalID() + ", ";
-            stringBuilder.append(str);
-        }
-        text.setText(stringBuilder);
-    }
-
     private BookImpl getBook(Long id) {
         return bookMap.get(id);
     }
@@ -295,7 +293,6 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         ArrayList<BookImpl> listOfKeys = new ArrayList<>(demo);
         bookList = listOfKeys;
         Collections.sort(bookList);
-        setUpTextView();
     }
     /**
      * Read the object from Base64 string.
@@ -321,6 +318,13 @@ public class MainActivity extends AppCompatActivity implements Serializable {
         oos.writeObject(o);
         oos.close();
         return Base64.getEncoder().encodeToString(baos.toByteArray());
+    }
+    void resetGUI(){
+        acceptView.setVisibility(View.GONE);
+        text.setText("Scan næste bog");
+        nextBookText.setVisibility(View.GONE);
+        nextBookPlace.setVisibility(View.GONE);
+        nextBookButton.setVisibility(View.GONE);
     }
 }
 
