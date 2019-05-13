@@ -14,21 +14,21 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@drawable/my_button"
         android:text="Afhentning"
         android:textColor="@color/colorBlack"
-        android:background="@drawable/my_button"
         app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/opsBut"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.036" />
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/opsBut"
         android:layout_width="311dp"
         android:layout_height="50dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="273dp"
+        android:layout_marginTop="320dp"
         android:layout_marginEnd="8dp"
         android:layout_weight=".5"
         android:background="@drawable/my_button"
@@ -43,21 +43,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="2">
+        android:weightSum="7">
 
         <View
             android:id="@+id/view1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:background="#FFFFFF"></View>
+            android:layout_weight="4"
+            android:background="@color/colorWhite"></View>
 
 
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:background="@color/colorBlack">
 
         </View>
@@ -76,7 +76,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/linearLayout" />
+        app:layout_constraintTop_toTopOf="@+id/linearLayout"
+        android:background="#e5e5e5"/>
 
     <TextView
         android:id="@+id/textView6"
