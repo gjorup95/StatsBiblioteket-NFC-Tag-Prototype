@@ -188,6 +188,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
         startActivity(intent);
     }
 
+    @SuppressLint("NewApi")
     @Override
     protected void onPause() {
         super.onPause();
