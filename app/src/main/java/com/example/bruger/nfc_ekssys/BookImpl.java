@@ -53,6 +53,10 @@ class BookImpl implements Serializable, Comparable<BookImpl> {
         return forlag;
     }
 
+    public void setForlag(String setForlag){
+        forlag = setForlag;
+    }
+
     public int getVersion() {
         return version;
     }
