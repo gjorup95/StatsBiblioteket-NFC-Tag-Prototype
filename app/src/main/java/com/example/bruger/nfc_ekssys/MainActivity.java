@@ -5,12 +5,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.drm.DrmStore;
-import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -19,7 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import android.os.Vibrator;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -57,6 +54,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
     private Button nextBookButton;
     private TextView nextBookPlace;
     private ArrayList<String> bookNames;
+    private Vibrator v;
 
 
     @Override
@@ -65,6 +63,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
         bookNames = new ArrayList<>();
         setupBookNames();
         scans = 0;
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         bookMap = new HashMap<>();
         bookList = new ArrayList<>();
         setContentView(R.layout.activity_main);
@@ -272,6 +271,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
                 acceptView.setVisibility(View.VISIBLE);
                 text.setText("Bogen er placeret korrekt");
                 nextBookButton.setVisibility(View.VISIBLE);
+                v.vibrate(300);
                 return true;
             }
             if (currentBook.getId() == previousBook.getId()) {
@@ -280,6 +280,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
                 acceptView.setImageResource(R.drawable.ic_afvist);
                 acceptView.setVisibility(View.VISIBLE);
                 text.setText("Du har scannet samme bog to gange");
+                v.vibrate(1500);
                 return false;
             }
         }
@@ -288,6 +289,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
         acceptView.setVisibility(View.VISIBLE);
         text.setText("Du har placeret bogen forkert, scan igen");
         Toast.makeText(this, "Du har placeret bogen forkert, scan igen", duration).show();
+        v.vibrate(1500);
         return false;
     }
 

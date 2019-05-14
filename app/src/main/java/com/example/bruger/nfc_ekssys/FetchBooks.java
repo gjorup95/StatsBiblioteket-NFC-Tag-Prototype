@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
+import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -51,7 +52,7 @@ public class FetchBooks extends AppCompatActivity {
     private BookAdapter adapter;
     private RecyclerView recyclerView;
     private int state=0;
-
+    private Vibrator v;
 
 
     @Override
@@ -62,6 +63,7 @@ public class FetchBooks extends AppCompatActivity {
         bookMap = new HashMap<>();
 
         setContentView(R.layout.activity_fetch_books);
+        v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         pendingIntent = PendingIntent.getActivity(this, 0,
@@ -151,12 +153,14 @@ public class FetchBooks extends AppCompatActivity {
                 acceptView.setImageResource(R.drawable.ic_flueben);
                 nextBookButton.setVisibility(View.VISIBLE);
                 bookWasCorrectlyScanned = false;
-
+                v.vibrate(300);
 
             } else {
                 successText.setText("Wrong book, try again");
                 acceptView.setVisibility(View.VISIBLE);
                 acceptView.setImageResource(R.drawable.ic_afvist);
+                v.vibrate(1500);
+
             }
         }
     }
