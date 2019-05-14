@@ -53,6 +53,7 @@ public class FetchBooks extends AppCompatActivity {
     private RecyclerView recyclerView;
     private int state=0;
     private Vibrator v;
+    private TextView nextIdText;
 
 
     @Override
@@ -76,6 +77,7 @@ public class FetchBooks extends AppCompatActivity {
                 fakeIt();
             }
         });
+        nextIdText = findViewById(R.id.nextIdText);
         successText = findViewById(R.id.successText);
         nextText = findViewById(R.id.nextText);
         nextBookButton = findViewById(R.id.nextBookButton);
@@ -84,6 +86,7 @@ public class FetchBooks extends AppCompatActivity {
             public void onClick(View view) {
                 if (getNextBookToScan() != null) {
                     nextText.setText(getNextBookToScan().getName());
+                    nextIdText.setText(getNextBookToScan().getForlag());
                 }
                 successText.setText("");
                 nextBookButton.setVisibility(View.GONE);
@@ -102,9 +105,11 @@ public class FetchBooks extends AppCompatActivity {
         nextText.setText("Ingen bøger i databasen");
         if (bookList.size() != 0) {
             nextText.setText(bookList.get(0).getName());
+            nextIdText.setText(bookList.get(0).getForlag());
         }
         recyclerView = findViewById(R.id.my_recycler_view);
         recyclerView.setVisibility(View.GONE);
+        randomizeBookList();
     }
 
 

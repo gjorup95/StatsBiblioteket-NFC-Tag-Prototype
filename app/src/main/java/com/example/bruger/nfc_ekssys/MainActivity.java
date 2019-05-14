@@ -47,13 +47,14 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
     private int scans = 0;
     private int addedBooks=0;
     private List<BookImpl> bookList;
-
+    private int addedNumbers = 0;
     int duration = Toast.LENGTH_SHORT;
     private ImageView acceptView;
     private TextView nextBookText;
     private Button nextBookButton;
     private TextView nextBookPlace;
     private ArrayList<String> bookNames;
+    private ArrayList<String> bookNumbers;
     private Vibrator v;
 
 
@@ -61,6 +62,8 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bookNames = new ArrayList<>();
+        bookNumbers = new ArrayList<>();
+        setupBookNumbers();
         setupBookNames();
         scans = 0;
         v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -69,10 +72,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
         setContentView(R.layout.activity_main);
         text = (TextView) findViewById(R.id.acceptTextMain);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        printButton = findViewById(R.id.buttonPrint);
-        saveButton = findViewById(R.id.saveButton);
-        loadButton = findViewById(R.id.loadButton);
-        deleteButton = findViewById(R.id.deleteButton);
+
         acceptView = findViewById(R.id.imageView);
         nextBookText=findViewById(R.id.nextBookText);
         text.setText("Scan næste bog");
@@ -92,38 +92,6 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                deleteHashMap();
-            }
-        });
-        loadButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    loadHashMap();
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    saveHashMap();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        printButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                updateList();
-            }
-        });
         if (nfcAdapter == null) {
             Toast.makeText(this, "No NFC", Toast.LENGTH_SHORT).show();
             finish();
@@ -197,12 +165,13 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
 
     private void addToBookMap(byte[] tag) {
         Long i = toDec(tag);
-        if (bookNames != null && addedBooks < bookNames.size()){
-            bookMap.put(i, new BookImpl(bookNames.get(addedBooks), i));
+        if (bookNames != null && addedBooks < bookNames.size() && bookNumbers != null && addedNumbers< bookNumbers.size()){
+            bookMap.put(i, new BookImpl(bookNames.get(addedBooks), i,bookNumbers.get(addedNumbers)));
             addedBooks++;
+            addedNumbers++;
         }
         else {
-            bookMap.put(i, new BookImpl("Harry Potter", i));
+            bookMap.put(i, new BookImpl("Harry Potter", i, "9-150-6000"));
         }
     }
 
@@ -246,7 +215,7 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
             nextBookPlace.setVisibility(View.VISIBLE);
             currentBook = getBook(toDec(id));
             nextBookText.setText(currentBook.getName()+" scannet");
-            nextBookPlace.setText(currentBook.getInternalID()+"");
+            nextBookPlace.setText(currentBook.getForlag()+"");
             text.setText("Scan bogen ved siden af");
             updateList();
             if (scans >= 1) {
@@ -345,17 +314,34 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
     }
     public void setupBookNames(){
         // TODO: setup books
-        bookNames.add("Pigen der legede med ilden");
-        bookNames.add("Mænd der hader kvinder");
+        bookNames.add("Designing the User Interface");
+        bookNames.add("Designing the User Interface");
         bookNames.add("Litteraturens veje");
-        bookNames.add("Microbiology with Diseases");
+        bookNames.add("Mænd der hader kvinder");
+        bookNames.add("Pigen der legede med ilden");
+        bookNames.add("Microbiology with Diseases by Taxonomy");
+
+        bookNames.add("Statistik viden fra data");
+        bookNames.add("Ingredienser: Den store bog om råvarer");
+        bookNames.add("Harry Potter and the Cursed Child");
+        bookNames.add("Mine Helte");
         bookNames.add("Biocatalysts and Enzyme Technology");
         bookNames.add("De bedste cocktails");
-        bookNames.add("Designing the User Interface");
-        bookNames.add("Harry Potter and the Cursed Child");
-        bookNames.add("Ingredienser: Den store bog om råvarer");
-        bookNames.add("Mine Helte");
-        bookNames.add("Designing the User Interface");
-        bookNames.add("Statistik viden fra data");
+    }
+    public void setupBookNumbers(){
+        bookNumbers.add("2-122-3012");
+        bookNumbers.add("2-122-3013");
+        bookNumbers.add("2-122-3020");
+        bookNumbers.add("2-122-3021");
+        bookNumbers.add("2-122-3022");
+        bookNumbers.add("2-122-3023");
+
+        // next
+        bookNumbers.add("2-123-3030");
+        bookNumbers.add("2-123-3031");
+        bookNumbers.add("2-123-3032");
+        bookNumbers.add("2-123-3035");
+        bookNumbers.add("2-123-3037");
+        bookNumbers.add("2-123-3038");
     }
 }

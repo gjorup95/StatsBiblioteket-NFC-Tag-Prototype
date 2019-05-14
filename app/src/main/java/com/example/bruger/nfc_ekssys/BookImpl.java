@@ -45,6 +45,18 @@ class BookImpl implements Serializable, Comparable<BookImpl> {
         this.forlag=forlag;
         this.version=version;
     }
+    public BookImpl (String name, long id, String forlag){
+        this.forlag = forlag;
+        this.name = name;
+        this.id = id;
+        height = 285;
+        depth = 26;
+        width = 245;
+        weigth = 1100;
+        objectID++;
+        this.internalID = objectID;
+        this.isScanned = false;
+    }
     public String getName() {
         return name;
     }
