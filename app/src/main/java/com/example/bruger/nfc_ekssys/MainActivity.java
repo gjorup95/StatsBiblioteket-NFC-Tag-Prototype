@@ -343,10 +343,17 @@ public class    MainActivity extends AppCompatActivity implements Serializable {
     }
     public void setupBookNames(){
         // TODO: setup books
-        bookNames.add("fisk");
-        bookNames.add("kur");
-        bookNames.add("rape");
-        bookNames.add("minus");
+        bookNames.add("Pigen der legede med ilden");
+        bookNames.add("Mænd der hader kvinder");
+        bookNames.add("Litteraturens veje");
+        bookNames.add("Microbiology with Diseases");
+        bookNames.add("Biocatalysts and Enzyme Technology");
+        bookNames.add("De bedste cocktails");
+        bookNames.add("Designing the User Interface");
+        bookNames.add("Harry Potter and the Cursed Child");
+        bookNames.add("Ingredienser: Den store bog om råvarer");
+        bookNames.add("Mine Helte");
+        bookNames.add("Designing the User Interface");
+        bookNames.add("Statistik viden fra data");
     }
 }
-
